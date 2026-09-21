@@ -3,8 +3,10 @@ import os
 import subprocess, re, sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = os.path.join(REPO, "src", "ILoveMyTeacher.java")
-FRAGE = re.compile(r"^Ist es die (\d+)\?$")
+# Einzelprogramm-Testbatterie; Sprache ueber argv waehlbar: python3 tools/treiber.py en
+LANG = sys.argv[1] if len(sys.argv) > 1 and sys.argv[1] in ("de", "en") else "de"
+SRC = os.path.join(REPO, "src", LANG, "ILoveMyTeacher.java")
+FRAGE = re.compile(r"^(?:Ist es die|Is it) (\d+)\?$")
 
 def spiele(plan, vorlauf=None, timeout=30):
     """plan: Liste von Geheimzahlen (eine pro Runde); None-Eintrag = schummeln mit '2'."""

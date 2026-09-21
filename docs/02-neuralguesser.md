@@ -1,6 +1,6 @@
 # 2 — `NeuralGuesser.java`: the network that teaches itself
 
-[← back to the overview](../README.md) · [source](../src/NeuralGuesser.java) · 487 lines · 21,312 bytes · 0 warnings
+[← back to the overview](../README.md) · source: [en](../src/en/NeuralGuesser.java) · [de](../src/de/NeuralGuesser.java) · 488 lines · 21,083 bytes · 0 warnings
 
 The exercise sheet jokes that this "is almost artificial intelligence". So here is
 the version that takes the joke literally: a multilayer perceptron with
@@ -10,7 +10,7 @@ using nothing but `java.util.Random` and `java.lang.Math`.
 Nobody tells it about binary search. It figuwes that part out by itself.
 
 ```sh
-java src/NeuralGuesser.java      # ≈ 4 seconds of training, then it plays
+java src/en/NeuralGuesser.java      # ≈ 4 seconds of training, then it plays
 ```
 
 ## What the network sees and says
@@ -19,7 +19,7 @@ java src/NeuralGuesser.java      # ≈ 4 seconds of training, then it plays
 |---|---|
 | **Input** (3 values) | lower bound, upper bound, width of the interval — each scaled to 0…1 |
 | **Output** (1 value) | `mu`: *where inside the interval to guess*, as a fraction from 0 to 1 |
-| **Guess** | `tipp = unten + round(mu · (oben − unten))` |
+| **Guess** | `guess = low + round(mu · (high − low))` |
 | **Reward** | −1 per question asked. Nothing else. |
 
 That reward is the entire specification of the task. "Ask as few questions as
@@ -28,9 +28,9 @@ possible" — never "halve the interval".
 ```mermaid
 graph LR
     subgraph IN["Input 3"]
-        I1(("unten"))
-        I2(("oben"))
-        I3(("breite"))
+        I1(("low"))
+        I2(("high"))
+        I3(("width"))
     end
     subgraph H1["Hidden 24 · tanh"]
         A1((" ")) 

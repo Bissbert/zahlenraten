@@ -36,7 +36,7 @@ for(;;){if(lo>hi){o.println("Hmm, deine Antworten passen nicht zusammen. Hast du
  while(c==0){String t=in.readLine();if(t==null)return;t=t.trim();
   if(t.equals("1")||t.equals("2")||t.equals("3"))c=t.charAt(0)-'0';
   else o.println("Bitte 1 (richtig), 2 (kleiner) oder 3 (grösser) eingeben.");}
- if(c==1){o.println((n<4?"Das war ja einfach!":n<6?"Gefunden!":n<7?"Geschafft.":"Uff, das war schwierig.")+" ("+n+" Versuche)");break;}
+ if(c==1){o.println((n<4?"Das war ja einfach!":n<6?"Gefunden!":n<7?"Geschafft.":"Uff, das war schwierig.")+" ("+n+(n==1?" Versuch)":" Versuche)"));break;}
  if(c==2)hi=q-1;else lo=q+1;}
 o.println("\nSpielen wir nochmal? (j/n)");String s=in.readLine();if(s==null)break;
 s=s.trim().toLowerCase(Locale.ROOT);if(!(s.isEmpty()||s.startsWith("j")||s.startsWith("y")))break;o.println();}

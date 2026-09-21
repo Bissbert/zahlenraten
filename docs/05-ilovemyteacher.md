@@ -1,10 +1,10 @@
 # 5 — `ILoveMyTeacher.java`: the program that does not search
 
-[← back to the overview](../README.md) · [source](../src/ILoveMyTeacher.java) · 303 lines · 14,096 bytes · 3 warnings *(deliberate)*
+[← back to the overview](../README.md) · source: [en](../src/en/ILoveMyTeacher.java) · [de](../src/de/ILoveMyTeacher.java) · 296 lines · 13,483 bytes · 3 warnings *(deliberate)*
 
 [`Verflucht.java`](04-verflucht.md) still contained a binary search that someone
 had written. This one does not. There is no loop over an interval anywhere in the
-file, no `unten`, no `oben`, no comparison of a guess against a target.
+file, no `low`, no `high`, no comparison of a guess against a target.
 
 **The central idea:** build an `AbstractList` that holds no data whatsoever, call
 `Collections.binarySearch` on it with the search key `null`, and pass a comparator
@@ -13,7 +13,7 @@ that, on every comparison, asks the human.
 > The human is the data structure being searched.
 
 ```sh
-java src/ILoveMyTeacher.java     # Java 15+ (text blocks)
+java src/en/ILoveMyTeacher.java     # Java 15+ (text blocks)
 ```
 
 ## How the search happens without a search
@@ -23,20 +23,20 @@ java src/ILoveMyTeacher.java     # Java 15+ (text blocks)
 ```mermaid
 sequenceDiagram
     participant C as Collections.binarySearch
-    participant O as ORAKEL (Comparator)
+    participant O as ORACLE (Comparator)
     participant M as Human (thinking of 48)
 
     C->>O: compare(49, null)
-    O->>M: "Ist es die 49?"
+    O->>M: "Is it 49?"
     M-->>O: "2" — smaller
     O-->>C: return +1
     C->>O: compare(24, null)
-    O->>M: "Ist es die 24?"
+    O->>M: "Is it 24?"
     M-->>O: "3" — larger
     O-->>C: return −1
     Note over C,M: … five more questions …
     C->>O: compare(48, null)
-    O->>M: "Ist es die 48?"
+    O->>M: "Is it 48?"
     M-->>O: "1" — correct
     O-->>C: return 0
     C-->>C: result: 48
@@ -45,18 +45,18 @@ sequenceDiagram
 The three pieces:
 
 ```java
-static final class Weltall extends AbstractList<Integer> implements RandomAccess {
+static final class Universe extends AbstractList<Integer> implements RandomAccess {
     public Integer get(int i) { return i; }          // the list "contains" i at index i
-    public int size()         { return OBEN - UNTEN + 1; }
+    public int size()         { return HIGH - LOW + 1; }
 }
 
-static final Comparator<Integer> ORAKEL = (tipp, niemand) -> {
+static final Comparator<Integer> ORACLE = (guess, nobody) -> {
     a += 1; а++;
-    System.out.println(D[3] + tipp + D[4]);          // "Ist es die tipp?"
-    return frage().wert();                           // 1 → 0, 2 → +1, 3 → −1
+    System.out.println(D[3] + guess + D[4]);         // "Is it guess?"
+    return ask().value();                            // 1 → 0, 2 → +1, 3 → −1
 };
 
-int var = Collections.binarySearch(new Weltall(), (Integer) null, ORAKEL);
+int var = Collections.binarySearch(new Universe(), (Integer) null, ORACLE);
 ```
 
 `Weltall` ("universe") stores nothing; `get(i)` simply returns `i`. The search key
@@ -130,13 +130,13 @@ guaranteed not to be.
 **Curse 14 — the praise is chosen by overload resolution.**
 
 ```java
-static String lob(long n)      { ... }   // "Das war ja einfach!"
-static String lob(Integer n)   { ... }   // "Gefunden!"
-static String lob(Object... n) { ... }   // "Uff, das war schwierig."
+static String praise(long n)      { ... }   // "Well, that was easy!"
+static String praise(Integer n)   { ... }   // "Found it!"
+static String praise(Object... n) { ... }   // "Phew, that was tricky."
 
-a <= 5 ? lob(a)                              // short → long: widening, phase 1
-      : a <= 6 ? lob(Integer.valueOf(a))     // boxing, phase 2
-               : lob((Object[]) new Object[]{ a })   // varargs, phase 3
+a <= 5 ? praise(a)                              // short → long: widening, phase 1
+      : a <= 6 ? praise(Integer.valueOf(a))     // boxing, phase 2
+               : praise((Object[]) new Object[]{ a })   // varargs, phase 3
 ```
 
 The three phases of method invocation (strict, loose, variable-arity) pick a

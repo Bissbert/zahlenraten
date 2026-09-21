@@ -1,6 +1,6 @@
 # 4 — `Verflucht.java`: fifteen curses, zero undefined behaviour
 
-[← back to the overview](../README.md) · [source](../src/Verflucht.java) · 229 lines · 10,349 bytes · 4 warnings *(deliberate)*
+[← back to the overview](../README.md) · source: [en](../src/en/Verflucht.java) · [de](../src/de/Verflucht.java) · 229 lines · 9,978 bytes · 4 warnings *(deliberate)*
 
 Still plain binary search. Still 1 / 5.80 / 7. But every single step is taken the
 worst way the Java Language Specification permits.
@@ -11,7 +11,7 @@ on a particular compiler. Everything here behaves the same on every conforming
 implementation. It is just deeply indecent.
 
 ```sh
-java src/Verflucht.java
+java src/en/Verflucht.java
 ```
 
 ## Control flow

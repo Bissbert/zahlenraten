@@ -1,33 +1,34 @@
 # 1 — `Rater.java`: the normal solution
 
-[← back to the overview](../README.md) · [source](../src/Rater.java) · 162 lines · 5,349 bytes · 0 warnings
+[← back to the overview](../README.md) · source: [en](../src/en/Rater.java) · [de](../src/de/Rater.java) · 161 lines · 5,118 bytes · 0 warnings
 
-This is the version you would actually hand in. No tricks, no cleverness, German
-Javadoc, one job per method.
+This is the version you would actually hand in. No tricks, no cleverness, proper
+Javadoc, one job per method. The snippets below are from `src/en/Rater.java`; the
+German edition is the same code with German names and prompts.
 
 ```sh
-java src/Rater.java
+java src/en/Rater.java
 ```
 
 ## How it works
 
-The program keeps the interval `[unten, oben]` (lower, upper) that the target can
-still be in and guesses its midpoint. Each answer shrinks the interval:
+The program keeps the interval `[low, high]` that the target can still be in and
+guesses its midpoint. Each answer shrinks the interval:
 
-- `2` (smaller) → the upper bound moves to `tipp - 1`
-- `3` (larger) → the lower bound moves to `tipp + 1`
+- `2` (smaller) → the upper bound moves to `guess - 1`
+- `3` (larger) → the lower bound moves to `guess + 1`
 - `1` (correct) → done
 
 ```mermaid
 flowchart TD
-    A["unten = 0, oben = 99<br/>versuche = 0"] --> B{"unten ≤ oben?"}
+    A["low = 0, high = 99<br/>guesses = 0"] --> B{"low ≤ high?"}
     B -- no --> H["interval empty<br/>→ you cheated"]
-    B -- yes --> C["tipp = unten + (oben − unten) / 2<br/>versuche++"]
-    C --> D["print: Ist es die tipp?"]
+    B -- yes --> C["guess = low + (high − low) / 2<br/>guesses++"]
+    C --> D["print: Is it guess?"]
     D --> E{"answer"}
-    E -- "1 correct" --> F["report versuche<br/>done"]
-    E -- "2 smaller" --> G1["oben = tipp − 1"]
-    E -- "3 larger" --> G2["unten = tipp + 1"]
+    E -- "1 correct" --> F["report guesses<br/>done"]
+    E -- "2 smaller" --> G1["high = guess − 1"]
+    E -- "3 larger" --> G2["low = guess + 1"]
     G1 --> B
     G2 --> B
 
@@ -38,20 +39,20 @@ flowchart TD
 The loop body is the whole program:
 
 ```java
-private static void spieleRunde() throws IOException {
-    int unten = MIN, oben = MAX, versuche = 0;
-    while (unten <= oben) {
-        int tipp = unten + (oben - unten) / 2;   // Mitte, ohne Überlaufgefahr
-        versuche++;
-        OUT.println("Ist es die " + tipp + "?");
-        switch (leseAntwort()) {
-            case RICHTIG: melde(versuche); return;
-            case KLEINER: oben  = tipp - 1; break;
-            default:      unten = tipp + 1; break;
+private static void playRound() throws IOException {
+    int low = MIN, high = MAX, guesses = 0;
+    while (low <= high) {
+        int guess = low + (high - low) / 2;   // midpoint, without overflow
+        guesses++;
+        OUT.println("Is it " + guess + "?");
+        switch (readAnswer()) {
+            case CORRECT: report(guesses); return;
+            case SMALLER: high = guess - 1; break;
+            default:      low  = guess + 1; break;
         }
     }
     OUT.println();
-    OUT.println("Hmm, deine Antworten passen nicht zusammen. Hast du geschummelt?");
+    OUT.println("Hmm, your answers don't add up. Did you cheat?");
 }
 ```
 
@@ -67,16 +68,17 @@ Averaged over all 100 numbers, this comes out at exactly **5.80** guesses.
 
 ## Details worth copying
 
-**Overflow-safe midpoint.** `unten + (oben - unten) / 2` instead of
-`(unten + oben) / 2`. It makes no difference for 0…99, but the naive form is the
+**Overflow-safe midpoint.** `low + (high - low) / 2` instead of
+`(low + high) / 2`. It makes no difference for 0…99, but the naive form is the
 classic binary-search bug that sat in the JDK itself for nine years.
 
 **Cheat detection falls out of the loop.** No special case is needed. If the human
-answers inconsistently, the interval eventually becomes empty, `unten > oben`, and
+answers inconsistently, the interval eventually becomes empty, `low > high`, and
 the loop simply ends.
 
-**Explicit UTF-8.** The program writes umlauts, so it does not rely on the
-platform default encoding:
+**Explicit UTF-8.** Both editions pin the encoding rather than trusting the
+platform default — the German one prints umlauts, and pinning it keeps the two
+byte-for-byte comparable:
 
 ```java
 private static final PrintStream OUT = new PrintStream(
@@ -89,8 +91,9 @@ private static final BufferedReader IN = new BufferedReader(
 dry) raises an `EOFException` that `main` catches, so a redirected run ends with a
 farewell instead of a stack trace.
 
-**Grammar.** One guess prints "1 Versuch", more than one prints "n Versuche". A
-tiny thing, but a program that tells you "1 Versuche" looks unfinished.
+**Grammar.** One guess prints "1 guess", more than one "n guesses" — and in
+German, "1 Versuch" against "n Versuche". A tiny thing, but a program that tells
+you "1 guesses" looks unfinished.
 
 ## Measured
 

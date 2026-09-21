@@ -50,7 +50,9 @@ public class Verflucht {
         + "6475206765736368756d6d656c743f00537069656c656e20776972206e6f63686d616c3f20286a2f6e2900426973207a756d"
         + "206ee463687374656e204d616c210042697474652031202872696368746967292c203220286b6c65696e657229206f646572"
         + "203320286772f673736572292065696e676562656e2e003d3d3d20564552464c554348544552205241544552203d3d3d2076"
-        + "6f6c6c20646566696e696572746573204a6176612c2074726f747a64656d2065696e65205a756d7574756e67";
+        + "6f6c6c20646566696e696572746573204a6176612c2074726f747a64656d2065696e65205a756d7574756e67002056657273"
+        + "75636829"
+;
 
     static PrintStream P;
     static String[] D;
@@ -122,7 +124,7 @@ public class Verflucht {
                 };
                 s.los(s, 0);
             } catch (Gewonnen g) {
-                P.println(LOB.getOrDefault(g.n, D[8]) + D[10] + g.n + D[9]);
+                P.println(LOB.getOrDefault(g.n, D[8]) + D[10] + g.n + (g.n == 1 ? D[16] : D[9]));
             } catch (Geschummelt g) {
                 P.println(D[11]);
             } catch (Ende e) {

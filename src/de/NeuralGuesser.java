@@ -355,7 +355,8 @@ public class NeuralGuesser {
             int answer = readAnswer();
             if (answer < 0) return;                       // Eingabe-Ende
             if (answer == 1) {
-                out.println(comment(tries) + " (" + tries + " Versuche)");
+                out.println(comment(tries) + " (" + tries
+                        + (tries == 1 ? " Versuch)" : " Versuche)"));
                 return;
             } else if (answer == 2) {
                 high = guess - 1;                         // gesuchte Zahl ist kleiner

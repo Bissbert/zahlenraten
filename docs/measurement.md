@@ -8,14 +8,16 @@ plain Python 3 with no dependencies except Pillow for the animations.
 
 ## The harness
 
-All five programs speak the same protocol, which makes them interchangeable in a
-driver: a line matching `Ist es die (\d+)?` is a question, and the driver replies
-with `1`, `2` or `3` depending on the secret number it has chosen.
+All ten programs speak the same protocol, which makes them interchangeable in a
+driver: a line matching `Is it (\d+)?` — or `Ist es die (\d+)?` in the German
+edition — is a question, and the driver replies with `1`, `2` or `3` depending on
+the secret number it has chosen. The drivers keep one small table of prompts per
+language; everything else is shared.
 
 ```mermaid
 flowchart LR
-    D["driver<br/>(knows the secret)"] -- "stdin: 1 / 2 / 3" --> J["java src/Version.java"]
-    J -- "stdout: Ist es die N?" --> D
+    D["driver<br/>(knows the secret)"] -- "stdin: 1 / 2 / 3" --> J["java src/&lt;lang&gt;/Version.java"]
+    J -- "stdout: Is it N?" --> D
     D --> R["count questions,<br/>check the verdict"]
 
     style R fill:#238636,stroke:#3fb950,color:#fff
@@ -27,14 +29,15 @@ versions get measured exactly like the normal one — no special cases anywhere.
 ## The exhaustive benchmark
 
 `tools/vergleich.py` plays **all 100 numbers, 0 through 99, in a single process**,
-using the program's own replay loop. That is a stricter test than 100 separate
+using the program's own replay loop, and does that for each of the ten programs
+(five versions × two languages). That is a stricter test than 100 separate
 launches: state left over between rounds would show up immediately.
 
 ```sh
 python3 tools/vergleich.py
 ```
 
-Result for every one of the five:
+Result for every one of the ten:
 
 | | min | mean | max |
 |---|---:|---:|---:|
@@ -59,7 +62,7 @@ that number means a version is not merely good, it is optimal.
 
 ## The edge cases
 
-`tools/randfaelle.py` runs six scenarios against each of the five programs:
+`tools/randfaelle.py` runs six scenarios against each of the ten programs:
 
 | Scenario | Expected |
 |---|---|
@@ -70,18 +73,21 @@ that number means a version is not merely good, it is optimal.
 | EOF immediately at start | goodbye, exit code 0 |
 | EOF in the middle of a round | goodbye, exit code 0, statistics intact |
 
-All 30 combinations pass, all exit 0.
+All 60 combinations pass, all exit 0.
 
 > One lesson from writing these: when a test failed, it was worth asking which
-> side was wrong. One assertion searched the output for `Versuche)` and broke on
-> the number 49, which is found in a single question and therefore correctly
-> prints `Versuch)`. The test was the bug, not the program.
+> side was wrong. One assertion searched the German output for `Versuche)` and
+> broke on the number 49, which is found in a single question and therefore
+> correctly prints `Versuch)`. The test was the bug, not the program. The English
+> edition has the same trap, `guesses)` against `guess)`.
 
 ## Compiler warnings
 
 ```sh
-javac -Xlint:all -d /tmp/out src/<Version>.java
+javac -Xlint:all -d /tmp/out src/<lang>/<Version>.java
 ```
+
+Identical in both languages:
 
 | Version | Warnings |
 |---|---|
